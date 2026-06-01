@@ -1,80 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Page</title>
-    
 </head>
 <body>
-    <header>
-        <div class="flex">
-            <h1 style="margin:0; font-size:1.125rem">Sample Website</h1>
-            <nav style="margin-left:auto">
-                <a href="#">Home</a>
-                <a href="#features">Features</a>
-                <a href="#contact">Contact</a>
-            </nav>
-        </div>
-    </header>
 
-    <main>
-        <section class="card" id="hero" style="margin-bottom:1rem">
-            <h2>Welcome</h2>
-            <p>This is a small sample HTML page including layout, form, and a tiny script.
-            Use this as a starting point for your project.</p>
-        </section>
+  <div class="container">
 
-        <section class="card" id="features" style="margin-bottom:1rem">
-            <h3>Features</h3>
-            <ul>
-                <li>Responsive layout</li>
-                <li>Accessible form controls</li>
-                <li>Small, readable CSS</li>
-            </ul>
-        </section>
+    <div class="left">
+      <input type="text" id="name" placeholder="Enter name">
+      <button onclick="saveUser()">Save</button>
+    </div>
 
-        <section class="card" id="contact">
-            <h3>Contact Us</h3>
-            <form id="contactForm">
-                <label>
-                    Name
-                    <input type="text" name="name" required placeholder="Your name">
-                </label>
-                <div style="height:0.5rem"></div>
-                <label>
-                    Message
-                    <textarea name="message" rows="4" required placeholder="Your message"></textarea>
-                </label>
-                <div style="height:0.75rem"></div>
-                <div class="flex">
-                    <button type="submit">Send</button>
-                    <div id="status" aria-live="polite" style="margin-left:0.5rem;color:#374151"></div>
-                </div>
-            </form>
-        </section>
-    </main>
+    <div class="right">
+      <h3>Users</h3>
+      <div id="users"></div>
+    </div>
 
-    <footer>
-        <small>&copy; 2026 Sample Website — Built for demonstration.</small>
-    </footer>
+  </div>
 
-    <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e){
-            e.preventDefault();
-            const form = e.currentTarget;
-            const data = new FormData(form);
-            const name = data.get('name').toString().trim();
-            const message = data.get('message').toString().trim();
-            const status = document.getElementById('status');
-            if(!name || !message){ status.textContent = 'Please complete the form.'; return; }
-            status.textContent = 'Sending...';
-            // Simulate async send
-            setTimeout(() => {
-                status.textContent = `Thanks, ${name}! Your message was received.`;
-                form.reset();
-            }, 700);
-        });
-    </script>
+  <script>
+    const API = "https://section-lnnnn.onrender.com/users";
+
+    async function saveUser() {
+      const name = document.getElementById("name").value;
+
+      await fetch(API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name })
+      });
+
+      document.getElementById("name").value = "";
+      loadUsers();
+    }
+
+    async function loadUsers() {
+      const res = await fetch(API);
+      const users = await res.json();
+
+      document.getElementById("users").innerHTML =
+        users.map(u => `<p>${u.name}</p>`).join("");
+    }
+
+    loadUsers();
+  </script>
+
 </body>
 </html>
